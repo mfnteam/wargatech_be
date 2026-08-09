@@ -139,4 +139,50 @@ class ProfileController extends Controller
             'profile_picture' => $pict ? Storage::url($pict) : "images/default-profile.jpg"
         ]);
     }
+
+
+    public function verifyCode(Request $request) {
+        $validated = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'code' => 'required|min:8|max:8'
+        ]);
+
+        if($validated->fails()) {
+            return response()->json([
+                'status' => 'Error',
+                'message' => 'Invalid Field',
+                'errors' => $validated->errors()
+            ], 422);
+        }
+
+        $user = User::where('email', $request['email'])->first();
+
+        if(!$user) {
+            return response()->json([
+                'status' => 'Error',
+                'message' => 'Pengguna tidak ditemukan'
+            ], 404);
+        }
+
+        $otp = CodeVerification::where('user_id', $user->id)
+            ->where('code', $request['code'])
+            ->where('expired_at', '>', now())->first();
+
+        if(!$otp) {
+            return response()->json([
+                'status' => 'Error',
+                'message' => 'Kode verifikasi salah atau kadaluwarsa'
+            ], 422);
+        }
+
+        $user->email_verified_at = now()->addMinutes(10);
+        $user->save();
+
+        $otp->delete();
+
+        return response()->json([
+            'status' => 'Success',
+            'message' => 'Verifikasi berhasil'
+        ]);
+    }
 }

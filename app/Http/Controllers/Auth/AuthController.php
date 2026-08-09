@@ -116,7 +116,7 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $user->email_verified_at = now()->addMinutes(10);
+        $user->email_verified_at = now();
         $user->save();
 
         $otp->delete();
