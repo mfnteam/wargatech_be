@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('profile_pictures', function (Blueprint $table) {
             $table->id();
-            $table->string('img')->default('https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png');
+            $table->string('img')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
         });

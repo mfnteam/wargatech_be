@@ -5,6 +5,7 @@ use App\Http\Controllers\Mobility\BusController;
 use App\Http\Controllers\Mobility\LrtController;
 use App\Http\Controllers\Mobility\MrtController;
 use App\Http\Controllers\Mobility\TrainController;
+use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Service\ServiceController;
 use App\Models\TrainStation;
@@ -93,4 +94,15 @@ Route::group([
     Route::get('/all-booking', [ServiceController::class, 'getAllBooking']);
     Route::put('/accept-booking/{id}', [ServiceController::class, 'accept']);
     Route::put('/reject-booking/{id}', [ServiceController::class, 'reject']);
+});
+
+
+Route::group([
+    'prefix' => 'profile',
+    'middleware' => 'auth:sanctum'
+], function() {
+    Route::put('/data-profile', [ProfileController::class, 'changeProfile']);
+    Route::post('/photo-profile', [ProfileController::class, 'changePhoto']);
+    Route::post('/delete-photo', [ProfileController::class, 'deletePhoto']);
+    Route::get('/', [ProfileController::class, 'getProfile']);
 });

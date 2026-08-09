@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -24,7 +25,7 @@ class ProfileController extends Controller
             $otp = CodeVerification::where('user_id', $user->first()->id)->first();
             $otp->delete();
 
-            $newotp = Str::random(8);
+            $newotp = strtolower(Str::random(8));
 
             CodeVerification::create([
                 'user_id' => $user->first()->id,
@@ -77,7 +78,7 @@ class ProfileController extends Controller
     public function changePhoto(Request $request) {
         $user = $request->user();
         $validated = Validator::make($request->all(), [
-            'attachment' => 'required|max:2048|images'
+            'attachment' => 'required|max:2048|image'
         ]);
 
         if($validated->fails()) {
@@ -123,6 +124,19 @@ class ProfileController extends Controller
         return response()->json([
             'status' => 'Success',
             'message' => 'Berhasil menghapus foto profil'
+        ]);
+    }
+
+
+    public function getProfile(Request $request) {
+        $user = $request->user();
+        $pict = ProfilePictures::where('user_id', $user->id)->first()->img;
+
+        return response()->json([
+            'status' => 'Success',
+            'message' => 'Berhasil mendapatkan data pengguna',
+            'user' => $user,
+            'profile_picture' => $pict ? Storage::url($pict) : "images/default-profile.jpg"
         ]);
     }
 }
