@@ -92,6 +92,14 @@ class TrackSeeder extends Seeder
             ]
         ];
 
+            foreach($train as $tr) {
+                Trackway::create([
+                    'track_name' => $tr['track_name'],
+                    'station_passed' => $tr['station_passed'],
+                    'travel_time' => $tr['travel_time']
+                ]);
+            }
+
             foreach($lrt as $rt) {
                 LrtTrackway::create([
                     'track_name' => $rt['track_name'],

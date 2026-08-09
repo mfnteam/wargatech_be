@@ -44,10 +44,10 @@ class ProfileController extends Controller
         $validated = Validator::make($request->all(), [
             'name' => 'required|regex:/^[A-Za-z ]+$/|min:3',
             'gender' => 'required|in:male,female',
-            'phone' => 'required|int|min:12|max:16',
+            'phone' => 'required|min:12|max:16',
             'birthday' => 'required|date_format:Y-m-d',
-            'nik' => 'required|int|unique:users,nik|min:16|max:16',
-            'nomor_kk' => 'required|int'
+            'nik' => 'required|unique:users,nik|min:16|max:16',
+            'nomor_kk' => 'required'
         ], [
             'name.regex' => 'Invalid character input, please use alphabet only',
             'gender.in' => 'Mohon pilih jenis kelamin yang benar'

@@ -22,10 +22,10 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
             'gender' => 'required|in:male,female',
-            'phone' => 'required|int|min:12|max:16',
+            'phone' => 'required|min:12|max:16',
             'birthday' => 'required|date_format:Y-m-d',
-            'nik' => 'required|int|unique:users,nik|min:16|max:16',
-            'nomor_kk' => 'required|int'
+            'nik' => 'required|unique:users,nik|min:16|max:16',
+            'nomor_kk' => 'required'
         ], [
             'name.regex' => 'Invalid character input, please use alphabet only',
             'gender.in' => 'Mohon pilih jenis kelamin yang benar'
@@ -45,6 +45,7 @@ class AuthController extends Controller
             'password' => Hash::make($request['password']),
             'birthday' => $request['birthday'],
             'phone' => $request['phone'],
+            'gender' => $request['gender'],
             'nik' => $request['nik'],
             'nomor_kk' => $request['nomor_kk'],
             'role' => 'warga',
