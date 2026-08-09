@@ -178,8 +178,6 @@ class ProfileController extends Controller
         $user->email_verified_at = now()->addMinutes(10);
         $user->save();
 
-        $otp->delete();
-
         return response()->json([
             'status' => 'Success',
             'message' => 'Verifikasi berhasil'
