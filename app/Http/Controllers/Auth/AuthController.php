@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\VerificationCodeMail;
 use App\Models\CodeVerification;
+use App\Models\ProfilePictures;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -47,6 +48,11 @@ class AuthController extends Controller
             'nik' => $request['nik'],
             'nomor_kk' => $request['nomor_kk'],
             'role' => 'warga',
+        ]);
+
+        ProfilePictures::create([
+            'user_id' => $user->id,
+            'img' => null
         ]);
 
         $otp = random_int(100000, 999999);
@@ -109,7 +115,7 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $user->email_verified_at = now();
+        $user->email_verified_at = now()->addMinutes(10);
         $user->save();
 
         $otp->delete();

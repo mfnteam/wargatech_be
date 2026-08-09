@@ -7,6 +7,7 @@ use App\Models\Picture;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ReportController extends Controller
@@ -140,7 +141,7 @@ class ReportController extends Controller
                     'type' => $lpr->type,
                     'location' => $lpr->location,
                     'description' => $lpr->description,
-                    'attachment' => Picture::where('report_id', $lpr->id)->first('img_url'),
+                    'attachment' => Storage::url(Picture::where('report_id', $lpr->id)->first('img_url')),
                     'created_at' => date_format(Carbon::parse($lpr->created_at)->addHours(7), 'Y-m-d H:i')
                 ];
             })
