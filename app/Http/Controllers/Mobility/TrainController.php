@@ -338,7 +338,7 @@ class TrainController extends Controller
         //greenline
         if($request['line'] === "greenline") {
             $greenlinetrack = strtolower($request['stasiun_awal']) . strtolower($request['stasiun_akhir']);
-            if($greenlinetrack === "tanahabangtangerang") {
+            if($greenlinetrack === "tanahabangrangkasbitung") {
                 $route = TrainRoute::create([
                     'train_id' => $train->id,
                     'name' => $request['line'],
@@ -354,7 +354,7 @@ class TrainController extends Controller
                 ], 201);
             }
 
-            if($greenlinetrack === "tangerangtanahabang") {
+            if($greenlinetrack === "rangkasbitungtanahabang") {
                 $route = TrainRoute::create([
                     'train_id' => $train->id,
                     'name' => $request['line'],
