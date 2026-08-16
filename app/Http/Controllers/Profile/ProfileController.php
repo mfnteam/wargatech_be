@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 use function Illuminate\Support\now;
 
@@ -21,19 +22,21 @@ class ProfileController extends Controller
     public function changeProfile(Request $request) {
         $user = $request->user();
 
-        if($user->first()->email_verified_at <= now()) {
+        if($user->email_verified_at <= now()->addHours(7)) {
             $otp = CodeVerification::where('user_id', $user->first()->id)->first();
-            $otp->delete();
+            if($otp) {
+                $otp->delete();
+            }
 
-            $newotp = strtolower(Str::random(8));
+            $newotp = strtolower(Str::random(6));
 
             CodeVerification::create([
-                'user_id' => $user->first()->id,
+                'user_id' => $user->id,
                 'code' => $newotp,
                 'expired_at'=> now()->addMinutes(5)
             ]);
 
-            Mail::to($user->first()->email)->send(new VerificationCodeMail($newotp));
+            Mail::to($user->email)->send(new VerificationCodeMail($newotp));
 
             return response()->json([
                 'status' => 'Error',
@@ -46,7 +49,7 @@ class ProfileController extends Controller
             'gender' => 'required|in:male,female',
             'phone' => 'required|min:12|max:16',
             'birthday' => 'required|date_format:Y-m-d',
-            'nik' => 'required|unique:users,nik|min:16|max:16',
+            'nik' => ['required', Rule::unique('users', 'nik')->ignore($user->id), 'min:16', 'max:16'],
             'nomor_kk' => 'required'
         ], [
             'name.regex' => 'Invalid character input, please use alphabet only',
@@ -136,7 +139,7 @@ class ProfileController extends Controller
             'status' => 'Success',
             'message' => 'Berhasil mendapatkan data pengguna',
             'user' => $user,
-            'profile_picture' => $pict ? Storage::url($pict) : "images/default-profile.jpg"
+            'profile_picture' => $pict ? "storage/" . $pict : "images/default-profile.jpg"
         ]);
     }
 
@@ -144,7 +147,7 @@ class ProfileController extends Controller
     public function verifyCode(Request $request) {
         $validated = Validator::make($request->all(), [
             'email' => 'required|email',
-            'code' => 'required|min:8|max:8'
+            'code' => 'required|min:6|max:6'
         ]);
 
         if($validated->fails()) {
@@ -175,7 +178,7 @@ class ProfileController extends Controller
             ], 422);
         }
 
-        $user->email_verified_at = now()->addMinutes(10);
+        $user->email_verified_at = now()->addHours(7)->addMinutes(10);
         $user->save();
 
         return response()->json([

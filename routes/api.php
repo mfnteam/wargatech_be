@@ -104,5 +104,6 @@ Route::group([
     Route::put('/data-profile', [ProfileController::class, 'changeProfile']);
     Route::post('/photo-profile', [ProfileController::class, 'changePhoto']);
     Route::post('/delete-photo', [ProfileController::class, 'deletePhoto']);
+    Route::post('/verify-code', [ProfileController::class, 'verifyCode']);
     Route::get('/', [ProfileController::class, 'getProfile']);
 });

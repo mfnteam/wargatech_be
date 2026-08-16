@@ -108,6 +108,7 @@ class ReportController extends Controller
                     'type' => $lpr->type,
                     'location' => $lpr->location,
                     'description' => $lpr->description,
+                    'status' => $lpr->status,
                     'attachment' => Picture::where('report_id', $lpr->id)->first('img_url'),
                     'created_at' => date_format(Carbon::parse($lpr->created_at)->addHours(7), 'Y-m-d H:i')
                 ];
@@ -141,7 +142,8 @@ class ReportController extends Controller
                     'type' => $lpr->type,
                     'location' => $lpr->location,
                     'description' => $lpr->description,
-                    'attachment' => Storage::url(Picture::where('report_id', $lpr->id)->first('img_url')),
+                    'status' => $lpr->status,
+                    'attachment' => Storage::url(Picture::where('report_id', $lpr->id)->first()->img_url),
                     'created_at' => date_format(Carbon::parse($lpr->created_at)->addHours(7), 'Y-m-d H:i')
                 ];
             })

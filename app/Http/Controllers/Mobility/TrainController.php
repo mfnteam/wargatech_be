@@ -31,10 +31,7 @@ class TrainController extends Controller
             'stasiun_akhir' => 'required',
             'via' => [
                 Rule::requiredIf(($request->stasiun_awal === 'cikarang' && $request->stasiun_akhir === "kampungbandan") || ($request->stasiun_awal === 'bekasi' && $request->stasiun_akhir === "kampungbandan") || ($request->stasiun_awal === 'kampungbandan' && $request->stasiun_akhir === "cikarang") || ($request->stasiun_awal === 'kampungbandan' && $request->stasiun_akhir === "bekasi")),
-                Rule::in(['mri', 'pse']),
                     ],
-        ], [
-            'via.in' => 'Tolong pilih antara pse (Pasar Senen) atau mri (Manggarai)'
         ]);
 
 

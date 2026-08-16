@@ -33,8 +33,7 @@ class LrtController extends Controller
             'stasiun_awal' => [Rule::requiredIf($request['type'] == "jabodebek")],
             'stasiun_akhir' => [Rule::requiredIf($request['type'] == "jabodebek")],
             'destination' => [
-                    Rule::requiredIf($request['type'] === "jakarta"),
-                    Rule::in(['pegangsaandua', 'manggarai'])
+                    Rule::requiredIf($request['type'] === "jakarta", Rule::in(['pegangsaandua', 'manggarai'])),
             ]
         ]);
 
@@ -145,7 +144,8 @@ class LrtController extends Controller
 
                 return response()->json([
                     'status' => 'Success',
-                    'message' => 'Kereta berhasil dibuat'
+                    'message' => 'Kereta berhasil dibuat',
+                    'route' => LrtRoute::where('train_id', $train->id)->get()
                 ]);
             }
 
@@ -172,7 +172,8 @@ class LrtController extends Controller
 
                 return response()->json([
                     'status' => 'Success',
-                    'message' => 'Kereta berhasil dibuat'
+                    'message' => 'Kereta berhasil dibuat',
+                    'route' => LrtRoute::where('train_id', $train->id)->get()
                 ]);
             }
 
@@ -180,7 +181,7 @@ class LrtController extends Controller
             return response()->json([
             'status' => 'Error',
             'message' => 'unknown route'
-            ]);
+            ], 404);
         }
     }
 
@@ -190,7 +191,6 @@ class LrtController extends Controller
         $type = $request->query('type');
 
         $train = LrtTrain::with('LrtRoute')->where('type', $type)
-                            ->where('departure', '>=', date_format(now(), 'H:i'))
                             ->orderBy('departure')->get();
 
         return response()->json([
@@ -219,7 +219,6 @@ class LrtController extends Controller
             ], 404);
         }
 
-
         return response()->json([
             'status' => 'Success',
             'message' => 'Berhasil mendapatkan kereta',
@@ -233,6 +232,7 @@ class LrtController extends Controller
                 'departure' => date_format(Carbon::parse($lrt->departure), 'H:i'),
                 'station' => LrtRoute::where('train_id', $lrt->id)
                                 ->join('lrt_stations', 'lrt_stations.id', '=', 'lrt_routes.station_id')
+                                ->orderBy('order')
                                 ->get()->map(function($st) use($dept) {
                                     return [
                                         'name' => $st->name,
